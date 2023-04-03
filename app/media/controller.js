@@ -3,6 +3,8 @@ const base64Img = require("base64-img");
 const { rootPath } = require("../../config/env");
 const Media = require("../../models/Media");
 
+const { existsSync, unlinkSync } = require("fs");
+
 module.exports = {
   getImage: async (req, res, next) => {
     try {
@@ -60,6 +62,28 @@ module.exports = {
           });
         }
       );
+    } catch (error) {
+      return res.status(500).json({ error: 1, message: error.message });
+    }
+  },
+  deleteImage: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+
+      const media = await Media.findByPk(id);
+
+      if (!media)
+        return res.status(404).json({ error: 1, message: "Image Not Found" });
+
+      if (existsSync(`${rootPath}/public/images/${media.dataValues.image}`))
+        unlinkSync(`${rootPath}/public/images/${media.dataValues.image}`);
+
+      await media.destroy();
+
+      return res.status(200).json({
+        error: 0,
+        message: "Image deleted successfully",
+      });
     } catch (error) {
       return res.status(500).json({ error: 1, message: error.message });
     }
