@@ -1,8 +1,7 @@
 const express = require("express");
+const { getImage } = require("./controller");
 const router = express.Router();
 
-router.get("/", function (req, res, next) {
-  res.send("media");
-});
+router.post("/", getImage);
 
 module.exports = router;
