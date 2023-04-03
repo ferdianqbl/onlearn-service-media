@@ -14,7 +14,7 @@ module.exports = {
 
       base64Img.img(
         image,
-        `./public/images/`,
+        `${rootPath}/public/images/`,
         Date.now(),
         async function (err, filepath) {
           if (err)
