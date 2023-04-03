@@ -1,10 +1,31 @@
 const isBase64 = require("is-base64");
 const base64Img = require("base64-img");
 const { rootPath } = require("../../config/env");
-const { Media } = require("../../models");
+const Media = require("../../models/Media");
 
 module.exports = {
   getImage: async (req, res, next) => {
+    try {
+      const media = await Media.findAll({
+        attributes: ["id", "image"],
+      });
+      const mappedMedia = media.map((item) => ({
+        ...item.dataValues,
+        image: `${req.get("host")}/images/${item.image}`,
+      }));
+
+      if (!media)
+        return res.status(404).json({ error: 1, message: "Images Not Found!" });
+
+      return res.status(200).json({
+        error: 0,
+        data: mappedMedia,
+      });
+    } catch (error) {
+      return res.status(500).json({ error: 1, message: error.message });
+    }
+  },
+  addImage: async (req, res, next) => {
     try {
       const { image } = req.body;
       if (!isBase64(image, { mimeRequired: true }))
@@ -40,7 +61,7 @@ module.exports = {
         }
       );
     } catch (error) {
-      return res.status(500).json({ error: 1, message: "Server error" });
+      return res.status(500).json({ error: 1, message: error.message });
     }
   },
 };
