@@ -33,6 +33,7 @@ const Media = sequelize.define(
   },
   {
     tableName: "media",
+    timestamps: true,
   }
 );
 
