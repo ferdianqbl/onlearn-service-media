@@ -8,9 +8,7 @@ const { existsSync, unlinkSync } = require("fs");
 module.exports = {
   getImage: async (req, res, next) => {
     try {
-      const media = await Media.findAll({
-        attributes: ["id", "image"],
-      });
+      const media = await Media.findAll();
       const mappedMedia = media.map((item) => ({
         ...item.dataValues,
         image: `${req.get("host")}/images/${item.image}`,
@@ -42,8 +40,7 @@ module.exports = {
         async function (err, filepath) {
           if (err)
             return res.status(500).json({ error: 1, message: err.message });
-
-          // filepath = ${rootPath}\public\images\img_name
+          // filepath = ${rootPath}\public\images\img_name --> Default filepath img
           const filename = filepath.split("\\").pop();
 
           const media = await Media.create({
@@ -56,7 +53,7 @@ module.exports = {
           return res.status(200).json({
             error: 0,
             data: {
-              ...media,
+              media: media.dataValues,
               image: `${req.get("host")}/images/${filename}`,
             },
           });
