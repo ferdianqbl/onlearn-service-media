@@ -19,6 +19,7 @@ module.exports = {
 
       return res.status(200).json({
         error: 0,
+        message: "Get Image Success",
         data: mappedMedia,
       });
     } catch (error) {
@@ -52,6 +53,7 @@ module.exports = {
 
           return res.status(200).json({
             error: 0,
+            message: "Image Successfully added.",
             data: {
               media: media.dataValues,
               image: `${req.get("host")}/images/${filename}`,
